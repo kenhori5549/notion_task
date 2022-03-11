@@ -40,8 +40,9 @@ echo $ANSWER1 |jq -r '.results[].properties | .Name.title[].text.content' > plan
 echo $ANSWER1 |jq -r '.results[].properties | ."ステータス".select.name' | sed -e 's/ToDo/未着手/g' -e 's/InProgress/作業中/g' -e 's/Outsource/作業中/g' -e 's/Done/完了/g'  > result.txt
 
 
-#ステータスが 'Done'かつ　'Date'が 本日の日付のものをplan.txtに追記
+#ステータスが 'Done'かつ　'last_edited_time'が 本日の日付のものをplan.txtに追記
 TODAY=$(date "+%Y-%m-%d")
+#YESTERDAY=$(date "+%Y-%m-%d" -d '1 day ago')
 
 ANSWER2=$(curl -X POST "https://api.notion.com/v1/databases/${DATABASE_ID}/query" \
   -sS \
@@ -58,7 +59,7 @@ ANSWER2=$(curl -X POST "https://api.notion.com/v1/databases/${DATABASE_ID}/query
                           }
                   },
                 {
-                  "property": "Date(期限)",
+                  "property": "last_edited_time",
                   "date": {
                       "equals": "'$TODAY'"
                     }
@@ -71,8 +72,10 @@ ANSWER2=$(curl -X POST "https://api.notion.com/v1/databases/${DATABASE_ID}/query
               ]
             }
           }')
+
 echo $ANSWER2 |jq -r '.results[].properties | .Name.title[].text.content' >> plan.txt     
-echo $ANSWER2 |jq -r '.results[].properties | ."ステータス".select.name' | sed -e 's/ToDo/未着手/g' -e 's/InProgress/作業中/g' -e 's/Outsource/作業中/g' -e 's/Done/完了/g'  >> result.txt         
+echo $ANSWER2 |jq -r '.results[].properties | ."ステータス".select.name' | sed -e 's/ToDo/未着手/g' -e 's/InProgress/作業中/g' -e 's/Outsource/作業中/g' -e 's/Done/完了/g'  >>result.txt
+
 
 
 # 行番号を項番としてつける。
