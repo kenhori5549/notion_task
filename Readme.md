@@ -37,7 +37,9 @@ plan2.txt result2.txt
 
 - 'ToDo'　であれば '未着手'
 
-- 'InProgress' or 'Outsource' 　であれば '作業中'
+- 'InProgress' 　であれば '作業中'
+
+- 'Outsource' であれば'依頼中'
 
 - 'Done' であれば'完了'
 
